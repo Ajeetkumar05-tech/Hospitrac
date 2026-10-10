@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediPulse HMS - Hospital Management System</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- External Custom CSS -->
+    <link rel="stylesheet" href="index.css">
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 no-print"></div>
+
+    <header id="main-header" class="bg-indigo-900 text-white shadow-md sticky top-0 z-40 no-print flex-none">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 p-2 rounded-lg text-white">
+                    <i class="fa-solid fa-hospital-user text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight tracking-wide">Hospitrac</h1>
+                    <span class="text-xs text-indigo-200">Enterprise Health Suite</span>
+                </div>
+            </div>
+
+            <!-- Role Indicator & Quick Actions -->
+            <div id="header-user-info" class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <p id="user-display-name" class="text-sm font-semibold">Dr. Ramkumar Ahirwar</p>
+                    <span id="user-display-role" class="inline-block text-xs bg-indigo-800 text-indigo-200 px-2 py-0.5 rounded-full uppercase tracking-wider font-medium">Admin</span>
+                </div>
+                <button onclick="toggleRoleModal()" class="bg-indigo-800 hover:bg-indigo-700 text-xs px-3 py-2 rounded-md transition flex items-center gap-1.5 border border-indigo-700">
+                    <i class="fa-solid fa-user-gear"></i> Switch Role
+                </button>
+                <button onclick="logoutUser()" class="bg-rose-600 hover:bg-rose-700 text-xs px-3 py-2 rounded-md font-semibold transition">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex-1 flex max-w-7xl w-full mx-auto px-2 sm:px-6 lg:px-8 py-4 gap-6 overflow-hidden">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar-nav" class="w-64 bg-white rounded-xl shadow-sm border border-slate-200 p-3 flex flex-col gap-1 no-print flex-none hidden md:flex h-[calc(100vh-6rem)] overflow-y-auto no-scrollbar">
+            <div class="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Navigation Modules</div>
+            
+            <button onclick="switchPhase(1)" id="nav-phase-1" class="nav-btn active flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-indigo-600 bg-indigo-50 transition">
+                <i class="fa-solid fa-chart-pie w-5 text-center"></i> Phase 1: Dashboard
+            </button>
+            <button onclick="switchPhase(2)" id="nav-phase-2" class="nav-btn flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 transition">
+                <i class="fa-solid fa-user-plus w-5 text-center"></i> Phase 2: Registration
+            </button>
+            <button onclick="switchPhase(3)" id="nav-phase-3" class="nav-btn flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 transition">
+                <i class="fa-solid fa-user-doctor w-5 text-center"></i> Phase 3: Doctors
+            </button>
+            <button onclick="switchPhase(4)" id="nav-phase-4" class="nav-btn flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 transition">
+                <i class="fa-solid fa-calendar-check w-5 text-center"></i> Phase 4: Appointments
+            </button>
+            <button onclick="switchPhase(5)" id="nav-phase-5" class="nav-btn flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 transition">
+                <i class="fa-solid fa-stethoscope w-5 text-center"></i> Phase 5: OPD & Rx
+            </button>
+            <button onclick="switchPhase(6)" id="nav-phase-6" class="nav-btn flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 transition">
+                <i class="fa-solid fa-vial w-5 text-center"></i> Phase 6: Laboratory
+            </button>
+            <button onclick="switchPhase(7)" id="nav-phase-7" class="nav-btn flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 transition">
+                <i class="fa-solid fa-pills w-5 text-center"></i> Phase 7: Pharmacy
+            </button>
+            <button onclick="switchPhase(8)" id="nav-phase-8" class="nav-btn flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 transition">
+                <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Phase 8: Billing
+            </button>
+            <button onclick="switchPhase(9)" id="nav-phase-9" class="nav-btn flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 transition">
+                <i class="fa-solid fa-bed w-5 text-center"></i> Phase 9: Bed Ward
+            </button>
+            <button onclick="switchPhase(10)" id="nav-phase-10" class="nav-btn flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 transition">
+                <i class="fa-solid fa-truck-medical w-5 text-center"></i> Phase 10: Emergency
+            </button>
+            <button onclick="switchPhase(11)" id="nav-phase-11" class="nav-btn flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 transition">
+                <i class="fa-solid fa-shield-halved w-5 text-center"></i> Phase 11: Permissions
+            </button>
+            <button onclick="switchPhase(12)" id="nav-phase-12" class="nav-btn flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 transition">
+                <i class="fa-solid fa-chart-line w-5 text-center"></i> Phase 12: Analytics
+            </button>
+        </aside>
+
+        <!-- Mobile Navigation Menu Dropdown -->
+        <div class="md:hidden w-full mb-4 no-print flex flex-col gap-2">
+            <label class="text-xs font-semibold text-slate-500 uppercase">Select Module Phase</label>
+            <select onchange="switchPhase(parseInt(this.value))" class="bg-white border border-slate-300 rounded-lg p-2.5 text-sm font-medium text-slate-700 shadow-sm w-full">
+                <option value="1">Phase 1: Dashboard</option>
+                <option value="2">Phase 2: Patient Registration</option>
+                <option value="3">Phase 3: Doctor Management</option>
+                <option value="4">Phase 4: Appointment Booking</option>
+                <option value="5">Phase 5: OPD & Prescription</option>
+                <option value="6">Phase 6: Laboratory Management</option>
+                <option value="7">Phase 7: Pharmacy & Stock Alerts</option>
+                <option value="8">Phase 8: Billing & Receipts</option>
+                <option value="9">Phase 9: Bed & Ward Management</option>
+                <option value="10">Phase 10: Emergency Triage</option>
+                <option value="11">Phase 11: Access Control & Security</option>
+                <option value="12">Phase 12: Advanced Reports & Analytics</option>
+            </select>
+        </div>
+
+        <!-- Main Content Area -->
+        <main id="main-content" class="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-6 overflow-y-auto max-h-[calc(100vh-6rem)]">
+
+            <section id="phase-1-panel" class="phase-container space-y-6">
+                <!-- Login View Container (When not logged in) -->
+                <div id="login-container" class="hidden max-w-md mx-auto my-12 p-6 bg-white border border-slate-200 rounded-2xl shadow-xl">
+                    <div class="text-center mb-6">
+                        <div class="inline-block p-3 bg-indigo-100 text-indigo-600 rounded-full mb-2">
+                            <i class="fa-solid fa-lock text-2xl"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-800">MediPulse HMS Login</h2>
+                        <p class="text-xs text-slate-500">Access role-based healthcare portal</p>
+                    </div>
+                    <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Select Role</label>
+                            <select id="login-role" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500">
+                                <option value="Admin">Admin / Director</option>
+                                <option value="Doctor">Doctor / Specialist</option>
+                                <option value="Receptionist">Receptionist / Front Desk</option>
+                                <option value="Pharmacist">Pharmacist</option>
+                                <option value="Lab Tech">Lab Technician</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Username / ID</label>
+                            <input type="text" id="login-username" value="admin" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Password</label>
+                            <input type="password" value="demo123" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition text-sm shadow-md">
+                            Sign In to Dashboard
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Dashboard View -->
+                <div id="dashboard-view" class="space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-800">Hospital Overview Dashboard</h2>
+                            <p class="text-xs text-slate-500">Real-time stats and operational analytics</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="renderDashboardMetrics()" class="px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold hover:bg-slate-50 transition">
+                                <i class="fa-solid fa-rotate"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Metric Cards Grid -->
+                    <div class="grid grid-cols-2 lg:grid-cols-6 gap-4">
+                        <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl">
+                            <div class="text-xs text-indigo-600 font-semibold uppercase">Total Patients</div>
+                            <div id="dash-total-patients" class="text-2xl font-bold text-indigo-900 mt-1">128</div>
+                            <span class="text-[10px] text-indigo-500">Registered</span>
+                        </div>
+                        <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
+                            <div class="text-xs text-emerald-600 font-semibold uppercase">Active Appointments</div>
+                            <div id="dash-active-appointments" class="text-2xl font-bold text-emerald-900 mt-1">14</div>
+                            <span class="text-[10px] text-emerald-500">Scheduled Today</span>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-100 p-4 rounded-xl">
+                            <div class="text-xs text-amber-600 font-semibold uppercase">OPD Queue</div>
+                            <div id="dash-opd-count" class="text-2xl font-bold text-amber-900 mt-1">8</div>
+                            <span class="text-[10px] text-amber-500">Waiting Patients</span>
+                        </div>
+                        <div class="bg-blue-50 border border-blue-100 p-4 rounded-xl">
+                            <div class="text-xs text-blue-600 font-semibold uppercase">Available Beds</div>
+                            <div id="dash-avail-beds" class="text-2xl font-bold text-blue-900 mt-1">18/30</div>
+                            <span class="text-[10px] text-blue-500">General & ICU</span>
+                        </div>
+                        <div class="bg-rose-50 border border-rose-100 p-4 rounded-xl">
+                            <div class="text-xs text-rose-600 font-semibold uppercase">Stock Alerts</div>
+                            <div id="dash-stock-alerts" class="text-2xl font-bold text-rose-900 mt-1">3</div>
+                            <span class="text-[10px] text-rose-500">Reorder Needed</span>
+                        </div>
+                        <div class="bg-purple-50 border border-purple-100 p-4 rounded-xl">
+                            <div class="text-xs text-purple-600 font-semibold uppercase">Total Revenue</div>
+                            <div id="dash-revenue" class="text-xl font-bold text-purple-900 mt-1">$14,250</div>
+                            <span class="text-[10px] text-purple-500">This Month</span>
+                        </div>
+                    </div>
+
+                    <!-- Quick Overview Section -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <h3 class="text-sm font-bold text-slate-700 mb-3 flex items-center justify-between">
+                                <span>Recent Registrations</span>
+                                <button onclick="switchPhase(2)" class="text-xs text-indigo-600 hover:underline">View All</button>
+                            </h3>
+                            <div id="dash-recent-patients-list" class="space-y-2 text-xs"></div>
+                        </div>
+
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <h3 class="text-sm font-bold text-slate-700 mb-3 flex items-center justify-between">
+                                <span>Emergency Triage Alert</span>
+                                <button onclick="switchPhase(10)" class="text-xs text-rose-600 hover:underline">Emergency Queue</button>
+                            </h3>
+                            <div id="dash-emergency-summary" class="space-y-2 text-xs"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="phase-2-panel" class="phase-container space-y-6 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-200">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Patient Registration & Directory</h2>
+                        <p class="text-xs text-slate-500">Add new patient demographics and view historical records</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Registration Form -->
+                    <form id="patient-form" onsubmit="savePatient(event)" class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                        <h3 class="text-sm font-bold text-slate-700 pb-2 border-b">New Patient Form</h3>
+                        <input type="hidden" id="patient-id">
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Full Name</label>
+                            <input type="text" id="patient-name" required class="w-full border border-slate-300 rounded p-2 text-xs">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs font-semibold text-slate-600">Age</label>
+                                <input type="number" id="patient-age" required class="w-full border border-slate-300 rounded p-2 text-xs">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-slate-600">Gender</label>
+                                <select id="patient-gender" class="w-full border border-slate-300 rounded p-2 text-xs">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs font-semibold text-slate-600">Blood Group</label>
+                                <select id="patient-blood" class="w-full border border-slate-300 rounded p-2 text-xs">
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-slate-600">Contact No.</label>
+                                <input type="tel" id="patient-contact" required class="w-full border border-slate-300 rounded p-2 text-xs">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Address</label>
+                            <input type="text" id="patient-address" class="w-full border border-slate-300 rounded p-2 text-xs">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Medical History / Allergies</label>
+                            <textarea id="patient-history" rows="2" class="w-full border border-slate-300 rounded p-2 text-xs" placeholder="e.g. Hypertension, Penicillin allergy"></textarea>
+                        </div>
+                        <div class="flex gap-2 pt-2">
+                            <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded text-xs transition">Save Patient</button>
+                            <button type="button" onclick="resetPatientForm()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-2 rounded text-xs transition">Clear</button>
+                        </div>
+                    </form>
+
+                    <!-- Patient List Table View -->
+                    <div class="lg:col-span-2 space-y-3">
+                        <div class="flex gap-2">
+                            <input type="text" id="patient-search" oninput="renderPatientsTable()" placeholder="Search patient by name, phone, or ID..." class="flex-1 border border-slate-300 rounded-lg p-2 text-xs">
+                        </div>
+                        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-100 text-slate-600 border-b">
+                                    <tr>
+                                        <th class="p-3">ID</th>
+                                        <th class="p-3">Patient Name</th>
+                                        <th class="p-3">Age/Gender</th>
+                                        <th class="p-3">Blood Group</th>
+                                        <th class="p-3">Contact</th>
+                                        <th class="p-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="patient-table-body" class="divide-y divide-slate-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="phase-3-panel" class="phase-container space-y-6 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-200">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Doctor Directory & Staff Management</h2>
+                        <p class="text-xs text-slate-500">Manage medical specialists, department availability, and consultation fees</p>
+                    </div>
+                    <button onclick="toggleDoctorModal()" class="bg-indigo-600 text-white text-xs px-3 py-2 rounded-lg font-semibold hover:bg-indigo-700">
+                        <i class="fa-solid fa-plus"></i> Add New Doctor
+                    </button>
+                </div>
+
+                <!-- Doctor Cards Grid -->
+                <div id="doctors-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </section>
+
+            <section id="phase-4-panel" class="phase-container space-y-6 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-200">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Appointment Scheduling</h2>
+                        <p class="text-xs text-slate-500">Book and monitor patient appointment slots with specialists</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Book Appointment Form -->
+                    <form id="appointment-form" onsubmit="saveAppointment(event)" class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                        <h3 class="text-sm font-bold text-slate-700 pb-2 border-b">Book Appointment Slot</h3>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Select Patient</label>
+                            <select id="appt-patient-select" required class="w-full border border-slate-300 rounded p-2 text-xs"></select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Select Doctor</label>
+                            <select id="appt-doctor-select" required class="w-full border border-slate-300 rounded p-2 text-xs"></select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs font-semibold text-slate-600">Date</label>
+                                <input type="date" id="appt-date" required class="w-full border border-slate-300 rounded p-2 text-xs">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-slate-600">Time Slot</label>
+                                <input type="time" id="appt-time" required class="w-full border border-slate-300 rounded p-2 text-xs">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Reason for Visit</label>
+                            <input type="text" id="appt-reason" placeholder="e.g. Regular Checkup, Fever" required class="w-full border border-slate-300 rounded p-2 text-xs">
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded text-xs transition">Confirm Booking</button>
+                    </form>
+
+                    <!-- Appointment Queue Table -->
+                    <div class="lg:col-span-2 space-y-3">
+                        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-100 text-slate-600 border-b">
+                                    <tr>
+                                        <th class="p-3">Appt ID</th>
+                                        <th class="p-3">Patient</th>
+                                        <th class="p-3">Doctor</th>
+                                        <th class="p-3">Date & Time</th>
+                                        <th class="p-3">Status</th>
+                                        <th class="p-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appt-table-body" class="divide-y divide-slate-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="phase-5-panel" class="phase-container space-y-6 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-200">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">OPD Consultation & E-Prescription</h2>
+                        <p class="text-xs text-slate-500">Doctor consultation console, diagnostic entries & prescription generation</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Prescription Form -->
+                    <form id="rx-form" onsubmit="generatePrescription(event)" class="lg:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+                        <h3 class="text-sm font-bold text-slate-700 pb-2 border-b">E-Prescription Builder</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-xs font-semibold text-slate-600">Patient</label>
+                                <select id="rx-patient-select" required class="w-full border border-slate-300 rounded p-2 text-xs"></select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-slate-600">Consulting Doctor</label>
+                                <select id="rx-doctor-select" required class="w-full border border-slate-300 rounded p-2 text-xs"></select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Clinical Diagnosis & Symptoms</label>
+                            <textarea id="rx-diagnosis" required rows="2" class="w-full border border-slate-300 rounded p-2 text-xs" placeholder="e.g. Acute Viral Bronchitis, Elevated BP"></textarea>
+                        </div>
+
+                        <!-- Prescribed Medicines Section -->
+                        <div class="space-y-2">
+                            <label class="text-xs font-semibold text-slate-600 flex justify-between">
+                                <span>Prescribed Medicines</span>
+                                <button type="button" onclick="addRxMedicineRow()" class="text-indigo-600 text-xs font-bold">+ Add Med</button>
+                            </label>
+                            <div id="rx-meds-list" class="space-y-2"></div>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Advice / Follow-up Instructions</label>
+                            <input type="text" id="rx-advice" placeholder="e.g. Drink plenty of warm water, return in 5 days" class="w-full border border-slate-300 rounded p-2 text-xs">
+                        </div>
+
+                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded text-xs transition">Generate & Preview Rx</button>
+                    </form>
+
+                    <!-- Recent Prescriptions Log -->
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+                        <h3 class="text-sm font-bold text-slate-700 pb-2 border-b">Recent OPD Records</h3>
+                        <div id="rx-history-list" class="space-y-2 text-xs"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="phase-6-panel" class="phase-container space-y-6 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-200">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Laboratory Test Management</h2>
+                        <p class="text-xs text-slate-500">Order lab investigation, update test parameters, and produce lab reports</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <form id="lab-order-form" onsubmit="orderLabTest(event)" class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                        <h3 class="text-sm font-bold text-slate-700 pb-2 border-b">Order Laboratory Investigation</h3>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Patient</label>
+                            <select id="lab-patient-select" required class="w-full border border-slate-300 rounded p-2 text-xs"></select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Test Category / Name</label>
+                            <select id="lab-test-name" required class="w-full border border-slate-300 rounded p-2 text-xs">
+                                <option value="Complete Blood Count (CBC)">Complete Blood Count (CBC)</option>
+                                <option value="Lipid Profile">Lipid Profile</option>
+                                <option value="Fasting Blood Sugar (FBS)">Fasting Blood Sugar (FBS)</option>
+                                <option value="Liver Function Test (LFT)">Liver Function Test (LFT)</option>
+                                <option value="Kidney Function Test (KFT)">Kidney Function Test (KFT)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded text-xs transition">Request Lab Order</button>
+                    </form>
+
+                    <div class="lg:col-span-2 space-y-3">
+                        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-100 text-slate-600 border-b">
+                                    <tr>
+                                        <th class="p-3">Test ID</th>
+                                        <th class="p-3">Patient</th>
+                                        <th class="p-3">Test Name</th>
+                                        <th class="p-3">Result / Values</th>
+                                        <th class="p-3">Status</th>
+                                        <th class="p-3 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lab-table-body" class="divide-y divide-slate-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="phase-7-panel" class="phase-container space-y-6 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-200">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Pharmacy & Stock Alert Monitor</h2>
+                        <p class="text-xs text-slate-500">Track drug inventory levels, reorder threshold alerts & dispensing</p>
+                    </div>
+                    <button onclick="toggleMedicineModal()" class="bg-indigo-600 text-white text-xs px-3 py-2 rounded-lg font-semibold hover:bg-indigo-700">
+                        <i class="fa-solid fa-plus"></i> Add New Medicine
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-100 text-slate-600 border-b">
+                            <tr>
+                                <th class="p-3">Code</th>
+                                <th class="p-3">Medicine Name</th>
+                                <th class="p-3">Category</th>
+                                <th class="p-3">Stock Qty</th>
+                                <th class="p-3">Reorder Level</th>
+                                <th class="p-3">Unit Price</th>
+                                <th class="p-3">Alert Status</th>
+                                <th class="p-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pharmacy-table-body" class="divide-y divide-slate-200"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="phase-8-panel" class="phase-container space-y-6 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-200">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Hospital Billing & Invoicing</h2>
+                        <p class="text-xs text-slate-500">Consolidated OPD, Pharmacy, Lab, and Bed service charge invoice generation</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Create Invoice Form -->
+                    <form id="billing-form" onsubmit="generateInvoice(event)" class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                        <h3 class="text-sm font-bold text-slate-700 pb-2 border-b">Create Billing Receipt</h3>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Select Patient</label>
+                            <select id="bill-patient-select" required class="w-full border border-slate-300 rounded p-2 text-xs"></select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Consultation / OPD Fee ($)</label>
+                            <input type="number" id="bill-opd-fee" value="50" class="w-full border border-slate-300 rounded p-2 text-xs">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Pharmacy Charges ($)</label>
+                            <input type="number" id="bill-pharma-fee" value="25" class="w-full border border-slate-300 rounded p-2 text-xs">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Laboratory Tests Charges ($)</label>
+                            <input type="number" id="bill-lab-fee" value="40" class="w-full border border-slate-300 rounded p-2 text-xs">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Bed / IPD Room Charges ($)</label>
+                            <input type="number" id="bill-bed-fee" value="0" class="w-full border border-slate-300 rounded p-2 text-xs">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600">Payment Status</label>
+                            <select id="bill-status" class="w-full border border-slate-300 rounded p-2 text-xs">
+                                <option value="Paid">Paid</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Partial">Partial</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded text-xs transition">Generate Invoice</button>
+                    </form>
+
+                    <!-- Invoices List -->
+                    <div class="lg:col-span-2 space-y-3">
+                        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-100 text-slate-600 border-b">
+                                    <tr>
+                                        <th class="p-3">Inv ID</th>
+                                        <th class="p-3">Patient</th>
+                                        <th class="p-3">Total Amount</th>
+                                        <th class="p-3">Status</th>
+                                        <th class="p-3 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="billing-table-body" class="divide-y divide-slate-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="phase-9-panel" class="phase-container space-y-6 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-200">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Bed & Ward Management</h2>
+                        <p class="text-xs text-slate-500">Real-time room availability, patient room allocations, and bed matrix</p>
+                    </div>
+                </div>
+
+                <!-- Bed Ward Layout Display -->
+                <div id="bed-matrix-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+            </section>
+
+            <section id="phase-10-panel" class="phase-container space-y-6 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-200">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800 text-rose-700 flex items-center gap-2">
+                            <i class="fa-solid fa-truck-medical"></i> Emergency & Triage Management
+                        </h2>
+                        <p class="text-xs text-slate-500">Immediate critical care admissions & priority classification</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <form id="emergency-form" onsubmit="addEmergencyPatient(event)" class="bg-rose-50 border border-rose-200 p-4 rounded-xl space-y-3">
+                        <h3 class="text-sm font-bold text-rose-800 pb-2 border-b border-rose-200">Quick Emergency Intake</h3>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-700">Patient Name / Unidentified ID</label>
+                            <input type="text" id="er-patient-name" required placeholder="e.g. John Doe / ER-902" class="w-full border border-slate-300 rounded p-2 text-xs">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-700">Triage Priority</label>
+                            <select id="er-priority" class="w-full border border-slate-300 rounded p-2 text-xs font-bold text-rose-700">
+                                <option value="Red (Critical)">Red - Critical (Immediate)</option>
+                                <option value="Yellow (Urgent)">Yellow - Urgent (&lt; 30 mins)</option>
+                                <option value="Green (Non-Urgent)">Green - Non-urgent</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-700">Chief Complaint</label>
+                            <input type="text" id="er-complaint" required placeholder="e.g. Severe Trauma, Acute Chest Pain" class="w-full border border-slate-300 rounded p-2 text-xs">
+                        </div>
+                        <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 rounded text-xs transition">Admit to ER Queue</button>
+                    </form>
+
+                    <div class="lg:col-span-2 space-y-3">
+                        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-100 text-slate-600 border-b">
+                                    <tr>
+                                        <th class="p-3">ER Tag</th>
+                                        <th class="p-3">Patient</th>
+                                        <th class="p-3">Priority Level</th>
+                                        <th class="p-3">Chief Condition</th>
+                                        <th class="p-3 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="er-table-body" class="divide-y divide-slate-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="phase-11-panel" class="phase-container space-y-6 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-200">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">User Access Control & Security Matrix</h2>
+                        <p class="text-xs text-slate-500">System user roles, operational permissions, and privilege levels</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h3 class="text-sm font-bold text-slate-700 mb-3">Role-Based Access Matrix</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs bg-white rounded-lg border border-slate-200">
+                            <thead class="bg-slate-100 text-slate-600">
+                                <tr>
+                                    <th class="p-3">Module / Capability</th>
+                                    <th class="p-3 text-center">Admin</th>
+                                    <th class="p-3 text-center">Doctor</th>
+                                    <th class="p-3 text-center">Receptionist</th>
+                                    <th class="p-3 text-center">Pharmacist</th>
+                                    <th class="p-3 text-center">Lab Tech</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200">
+                                <tr>
+                                    <td class="p-3 font-semibold">Patient Registration</td>
+                                    <td class="p-3 text-center text-emerald-600"><i class="fa-solid fa-check"></i></td>
+                                    <td class="p-3 text-center text-emerald-600"><i class="fa-solid fa-check"></i></td>
+                                    <td class="p-3 text-center text-emerald-600"><i class="fa-solid fa-check"></i></td>
+                                    <td class="p-3 text-center text-slate-300"><i class="fa-solid fa-xmark"></i></td>
+                                    <td class="p-3 text-center text-slate-300"><i class="fa-solid fa-xmark"></i></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold">OPD & Prescriptions</td>
+                                    <td class="p-3 text-center text-emerald-600"><i class="fa-solid fa-check"></i></td>
+                                    <td class="p-3 text-center text-emerald-600"><i class="fa-solid fa-check"></i></td>
+                                    <td class="p-3 text-center text-slate-300"><i class="fa-solid fa-xmark"></i></td>
+                                    <td class="p-3 text-center text-slate-300"><i class="fa-solid fa-xmark"></i></td>
+                                    <td class="p-3 text-center text-slate-300"><i class="fa-solid fa-xmark"></i></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold">Pharmacy Stock & Dispense</td>
+                                    <td class="p-3 text-center text-emerald-600"><i class="fa-solid fa-check"></i></td>
+                                    <td class="p-3 text-center text-slate-300"><i class="fa-solid fa-xmark"></i></td>
+                                    <td class="p-3 text-center text-slate-300"><i class="fa-solid fa-xmark"></i></td>
+                                    <td class="p-3 text-center text-emerald-600"><i class="fa-solid fa-check"></i></td>
+                                    <td class="p-3 text-center text-slate-300"><i class="fa-solid fa-xmark"></i></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold">Billing & Collection</td>
+                                    <td class="p-3 text-center text-emerald-600"><i class="fa-solid fa-check"></i></td>
+                                    <td class="p-3 text-center text-slate-300"><i class="fa-solid fa-xmark"></i></td>
+                                    <td class="p-3 text-center text-emerald-600"><i class="fa-solid fa-check"></i></td>
+                                    <td class="p-3 text-center text-slate-300"><i class="fa-solid fa-xmark"></i></td>
+                                    <td class="p-3 text-center text-slate-300"><i class="fa-solid fa-xmark"></i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="phase-12-panel" class="phase-container space-y-6 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-200">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Hospital Analytics & Reports</h2>
+                        <p class="text-xs text-slate-500">Data visual graphs, performance metrics & executive insights</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <h3 class="text-sm font-bold text-slate-700 mb-3">Monthly Revenue Trend ($)</h3>
+                        <canvas id="chart-revenue" class="w-full h-64"></canvas>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <h3 class="text-sm font-bold text-slate-700 mb-3">Patient Admission Stats</h3>
+                        <canvas id="chart-patients" class="w-full h-64"></canvas>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Doctor Modal -->
+    <div id="doctor-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4">
+            <h3 class="text-lg font-bold text-slate-800 border-b pb-2">Add New Doctor</h3>
+            <form onsubmit="saveDoctor(event)" class="space-y-3">
+                <div>
+                    <label class="text-xs font-semibold text-slate-600">Doctor Name</label>
+                    <input type="text" id="doc-name" required class="w-full border border-slate-300 rounded p-2 text-xs">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-slate-600">Specialization</label>
+                    <select id="doc-spec" class="w-full border border-slate-300 rounded p-2 text-xs">
+                        <option value="Cardiology">Cardiology</option>
+                        <option value="Pediatrics">Pediatrics</option>
+                        <option value="Neurology">Neurology</option>
+                        <option value="Orthopedics">Orthopedics</option>
+                        <option value="General Medicine">General Medicine</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-slate-600">OPD Fee ($)</label>
+                    <input type="number" id="doc-fee" value="60" required class="w-full border border-slate-300 rounded p-2 text-xs">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="toggleDoctorModal()" class="px-4 py-2 bg-slate-200 rounded text-xs">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded text-xs font-semibold">Save Doctor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Medicine Modal -->
+    <div id="med-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4">
+            <h3 class="text-lg font-bold text-slate-800 border-b pb-2">Add New Drug Stock</h3>
+            <form onsubmit="saveMedicine(event)" class="space-y-3">
+                <div>
+                    <label class="text-xs font-semibold text-slate-600">Medicine Name</label>
+                    <input type="text" id="med-name" required class="w-full border border-slate-300 rounded p-2 text-xs">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600">Stock Qty</label>
+                        <input type="number" id="med-stock" required class="w-full border border-slate-300 rounded p-2 text-xs">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600">Reorder Threshold</label>
+                        <input type="number" id="med-reorder" required class="w-full border border-slate-300 rounded p-2 text-xs">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-slate-600">Unit Price ($)</label>
+                    <input type="number" step="0.01" id="med-price" required class="w-full border border-slate-300 rounded p-2 text-xs">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="toggleMedicineModal()" class="px-4 py-2 bg-slate-200 rounded text-xs">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded text-xs font-semibold">Add Stock</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Switch Role Modal -->
+    <div id="role-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6 space-y-4">
+            <h3 class="text-lg font-bold text-slate-800 border-b pb-2">Switch Active Role</h3>
+            <div class="space-y-2">
+                <button onclick="setRole('Admin')" class="w-full text-left px-3 py-2 border rounded-lg text-xs font-semibold hover:bg-indigo-50 hover:border-indigo-300 transition">Admin / Executive</button>
+                <button onclick="setRole('Doctor')" class="w-full text-left px-3 py-2 border rounded-lg text-xs font-semibold hover:bg-indigo-50 hover:border-indigo-300 transition">Doctor Specialist</button>
+                <button onclick="setRole('Receptionist')" class="w-full text-left px-3 py-2 border rounded-lg text-xs font-semibold hover:bg-indigo-50 hover:border-indigo-300 transition">Receptionist</button>
+                <button onclick="setRole('Pharmacist')" class="w-full text-left px-3 py-2 border rounded-lg text-xs font-semibold hover:bg-indigo-50 hover:border-indigo-300 transition">Pharmacist</button>
+                <button onclick="setRole('Lab Tech')" class="w-full text-left px-3 py-2 border rounded-lg text-xs font-semibold hover:bg-indigo-50 hover:border-indigo-300 transition">Lab Technician</button>
+            </div>
+            <button onclick="toggleRoleModal()" class="w-full py-2 bg-slate-200 rounded text-xs font-semibold">Close</button>
+        </div>
+    </div>
+
+    <!-- External Custom JavaScript -->
+    <script src="index.js"></script>
+</body>
+</html>
