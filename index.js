@@ -1,4 +1,4 @@
-let currentUser = { name: "Dr. Alexander Fleming", role: "Admin" };
+let currentUser = { name: "Dr.Ramkumar Ahirwar", role: "Admin" };
 
 let patients = [
     { id: "P-101", name: "Pawan Kumar", age: 45, gender: "Male", blood: "O+", contact: "+1 555-0192", address: "12 Main St", history: "Hypertension" },
@@ -51,8 +51,8 @@ function showToast(msg, type = "success") {
     const container = document.getElementById("toast-container");
     const toast = document.createElement("div");
     const bgClass = type === "error" ? "bg-rose-600" : "bg-emerald-600";
-    toast.className = `${bgClass} text-white text-xs px-4 py-3 rounded-lg shadow-xl flex items-center justify-between min-w-[200px] transition-all`;
-    toast.innerHTML = `<span>${msg}</span><button onclick="this.parentElement.remove()" class="ml-2 font-bold">&times;</button>`;
+    toast.className = `₹{bgClass} text-white text-xs px-4 py-3 rounded-lg shadow-xl flex items-center justify-between min-w-[200px] transition-all`;
+    toast.innerHTML = `<span>₹{msg}</span><button onclick="this.parentElement.remove()" class="ml-2 font-bold">&times;</button>`;
     container.appendChild(toast);
     setTimeout(() => toast.remove(), 3500);
 }
