@@ -1,15 +1,15 @@
 let currentUser = { name: "Dr. Alexander Fleming", role: "Admin" };
 
 let patients = [
-    { id: "P-101", name: "John Smith", age: 45, gender: "Male", blood: "O+", contact: "+1 555-0192", address: "12 Main St", history: "Hypertension" },
-    { id: "P-102", name: "Sarah Connor", age: 32, gender: "Female", blood: "A-", contact: "+1 555-0143", address: "88 Pine Rd", history: "None" },
-    { id: "P-103", name: "Michael Vance", age: 60, gender: "Male", blood: "B+", contact: "+1 555-0811", address: "404 Elm St", history: "Type-2 Diabetes" }
+    { id: "P-101", name: "Pawan Kumar", age: 45, gender: "Male", blood: "O+", contact: "+1 555-0192", address: "12 Main St", history: "Hypertension" },
+    { id: "P-102", name: "Sanjay Chauhan", age: 32, gender: "Female", blood: "A-", contact: "+1 555-0143", address: "88 Pine Rd", history: "None" },
+    { id: "P-103", name: "Deeoak Chaurasiya", age: 60, gender: "Male", blood: "B+", contact: "+1 555-0811", address: "404 Elm St", history: "Type-2 Diabetes" }
 ];
 
 let doctors = [
-    { id: "D-1", name: "Dr. Gregory House", spec: "Neurology", fee: 100, status: "Available" },
-    { id: "D-2", name: "Dr. Meredith Grey", spec: "General Surgery", fee: 90, status: "In OPD" },
-    { id: "D-3", name: "Dr. Stephen Strange", spec: "Cardiology", fee: 120, status: "Available" }
+    { id: "D-1", name: "Dr. Aditya Manjhi", spec: "Neurology", fee: 100, status: "Available" },
+    { id: "D-2", name: "Dr. Alok tiwari", spec: "General Surgery", fee: 90, status: "In OPD" },
+    { id: "D-3", name: "Dr. Anmol Chauhan", spec: "Cardiology", fee: 120, status: "Available" }
 ];
 
 let appointments = [
