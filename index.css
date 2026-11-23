@@ -33,3 +33,59 @@ body {
 .nav-phase-1{
 color: aqua;
 }
+
+/* ===== HOSPITRAC NAVIGATION BAR ===== */
+
+#sidebar-nav {
+    background: #10243e !important;
+    border: 1px solid #1e3a5f !important;
+    border-radius: 14px;
+    padding: 14px;
+}
+
+/* Navigation Heading */
+#sidebar-nav > div:first-child {
+    color: #8ba9c9 !important;
+    letter-spacing: 1.5px;
+}
+
+/* All Navigation Buttons */
+#sidebar-nav .nav-btn {
+    color: #dbeafe !important;
+    background: transparent !important;
+    border-radius: 9px;
+    padding: 12px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+/* Navigation Icons */
+#sidebar-nav .nav-btn i {
+    color: #60a5fa !important;
+}
+
+/* Hover Effect */
+#sidebar-nav .nav-btn:hover {
+    background: #1e3a5f !important;
+    color: #ffffff !important;
+    transform: translateX(4px);
+    border-color: #2563eb;
+}
+
+/* Active Navigation */
+#sidebar-nav .nav-btn.bg-indigo-50 {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    border-color: #60a5fa;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Active Icon */
+#sidebar-nav .nav-btn.bg-indigo-50 i {
+    color: #ffffff !important;
+}
+
+/* Smooth Animation */
+#sidebar-nav .nav-btn {
+    cursor: pointer;
+}
