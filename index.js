@@ -213,7 +213,7 @@ function renderDoctorsGrid() {
                 </div>
                 <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-semibold">${d.status}</span>
             </div>
-            <p class="text-xs text-slate-500">Consultation Fee: <span class="font-bold text-slate-700">$${d.fee}</span></p>
+            <p class="text-xs text-slate-500">Consultation Fee: <span class="font-bold text-slate-700">₹${d.fee}</span></p>
         </div>
     `).join("");
 }
