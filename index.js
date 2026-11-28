@@ -423,7 +423,7 @@ function generateInvoice(e) {
         status: status
     });
 
-    showToast(`Invoice generated: $${total}`);
+    showToast(`Invoice generated: ₹${total}`);
     renderBillingTable();
 }
 
