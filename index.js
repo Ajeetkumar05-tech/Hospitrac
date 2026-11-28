@@ -433,7 +433,7 @@ function renderBillingTable() {
         <tr class="hover:bg-slate-50">
             <td class="p-3 font-bold text-indigo-600">${inv.id}</td>
             <td class="p-3">${inv.patientName}</td>
-            <td class="p-3 font-bold">$${inv.amount.toFixed(2)}</td>
+            <td class="p-3 font-bold">₹${inv.amount.toFixed(2)}</td>
             <td class="p-3"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded font-semibold">${inv.status}</span></td>
             <td class="p-3 text-right">
                 <button onclick="window.print()" class="text-slate-600 hover:text-indigo-600"><i class="fa-solid fa-print"></i></button>
