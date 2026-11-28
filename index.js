@@ -548,7 +548,7 @@ function renderAnalyticsCharts() {
             data: {
                 labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
                 datasets: [{
-                    label: 'Revenue ($)',
+                    label: 'Revenue (₹)',
                     data: [12000, 19000, 15000, 22000, 28000, 31000],
                     borderColor: '#4f46e5',
                     fill: false,
