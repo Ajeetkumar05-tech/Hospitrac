@@ -384,7 +384,7 @@ function renderPharmacyTable() {
                 <td class="p-3 text-slate-500">${i.category}</td>
                 <td class="p-3 font-bold ${isAlert ? 'text-rose-600' : 'text-slate-800'}">${i.stock}</td>
                 <td class="p-3 text-slate-400">${i.reorder}</td>
-                <td class="p-3">$${i.price.toFixed(2)}</td>
+                <td class="p-3">₹${i.price.toFixed(2)}</td>
                 <td class="p-3">
                     ${isAlert ? '<span class="bg-rose-100 text-rose-800 text-[10px] px-2 py-0.5 rounded font-bold"><i class="fa-solid fa-triangle-exclamation"></i> Low Stock</span>' : '<span class="text-emerald-600 text-[10px] font-semibold">Normal</span>'}
                 </td>
